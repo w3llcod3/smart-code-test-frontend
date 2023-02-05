@@ -1,33 +1,50 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import IconButton from '@mui/material/IconButton';
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-import { Box, Container, Grid, Typography, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableFooter,
+  TablePagination,
+  IconButton,
+  Stack,
+  TextField,
+  CircularProgress,
+} from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import CircularProgress from '@mui/material/CircularProgress';
-
 
 const host = process.env.NEXT_PUBLIC_HOST
 const dayjs = require('dayjs')
 const duration = require('dayjs/plugin/duration')
 dayjs.extend(duration)
+
+/**
+ * Capitalize
+ * @param {String} str 
+ * @returns 
+ */
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 export default function Members() {
   function DataTable() {
@@ -58,7 +75,7 @@ export default function Members() {
       };
 
       const handleBackButtonClick = (event) => {
-        const newValue = page -1
+        const newValue = page - 1
         setPage(newValue);
         load(newValue * limit, limit)
       };
@@ -109,6 +126,13 @@ export default function Members() {
       );
     }
 
+    /**
+     * Get absences data from API and set it to state
+     * @param {Number} offset 
+     * @param {Number} limit 
+     * @param {String} type 
+     * @param {Date} date 
+     */
     function load(offset, limit, type, date) {
       setLoading(true);
       setItems([])
@@ -123,15 +147,13 @@ export default function Members() {
           setItems(items)
           setTotal(total)
         })
-        .catch(() => {
+        .catch((res) => {
+          console.log(res)
           setLoadingError('error')
         })
         .finally(() => setLoading(false))
     }
 
-    function capitalize(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
 
     function calcPeriod(start, end) {
       const date1 = dayjs(start)
@@ -169,16 +191,24 @@ export default function Members() {
       load(page * limit, limit)
     }, [])
 
+    /**
+     * Render loading spinner
+     * @returns {jsx}
+     */
     function Loader() {
       return (
         <Grid container justifyContent="center">
           <Box sx={{ display: 'flex' }}>
-            <CircularProgress />
+            <CircularProgress data-testid="circular-loader" />
           </Box>
         </Grid>
       )
     }
 
+    /**
+     * Render no data status
+     * @returns {jsn}
+     */
     function NoData() {
       return (
         <Grid container justifyContent="center">
@@ -189,6 +219,10 @@ export default function Members() {
       )
     }
 
+    /**
+     * Render error status
+     * @returns {jsx}
+     */
     function DataError() {
       return (
         <Grid container justifyContent="center">
@@ -199,6 +233,10 @@ export default function Members() {
       )
     }
 
+    /**
+     * Render data table
+     * @returns {jsx}
+     */
     function DataTable() {
       return (
         <Box sx={{ pt: 3 }}>
@@ -285,7 +323,7 @@ export default function Members() {
               <InputLabel id="type-filter-select">Type filter</InputLabel>
               <Select
                 labelId="type-filter-select"
-                id="demo-simple-select"
+                data-testid="type-filter-select"
                 value={typeFilter}
                 label="Filter by type"
                 onChange={handleTypeFilterChange}
@@ -300,6 +338,7 @@ export default function Members() {
               <Stack spacing={3}>
                 <DesktopDatePicker
                   label="Filter by date"
+                  InputProps={{ 'data-testid': 'date-filter-select' }}
                   inputFormat="DD/MM/YYYY"
                   value={dateFilter}
                   onChange={handleDateFilterChange}
@@ -310,7 +349,7 @@ export default function Members() {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={6} lg={2}>
-            <Button onClick={clearFilters} sx={{
+            <Button disabled={!typeFilter && !dateFilter} onClick={clearFilters} sx={{
               mt: 1
             }}>
               Clear
