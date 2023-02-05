@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 const host = process.env.NEXT_PUBLIC_HOST
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import TableFooter from '@mui/material/TableFooter';
-import TablePagination from '@mui/material/TablePagination';
-import IconButton from '@mui/material/IconButton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableFooter,
+  TablePagination,
+  IconButton,
+  Box,
+  Container,
+  Grid,
+  Typography,
+} from '@mui/material'
 import FirstPageIcon from '@mui/icons-material/FirstPage';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
-
-import { Box, Container, Grid, Typography } from '@mui/material';
 
 export default function Members() {
   function DataTable() {
@@ -100,7 +104,7 @@ export default function Members() {
           setItems(items)
           setTotal(total)
         })
-        .catch((res) => {
+        .catch(() => {
           // 
         })
         .finally(() => setLoading(false))
@@ -119,7 +123,7 @@ export default function Members() {
           Members
         </Typography>
         <Typography variant="subtitle1">
-          Manage members list
+          View members list
         </Typography>
         <Box sx={{ pt: 3 }}>
           <Grid
